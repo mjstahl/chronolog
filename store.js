@@ -5,8 +5,15 @@ const github = new Octokit({
   auth: process.env.GITHUB_TOKEN
 })
 
-async function saveMessage(message) {
-  const description = `CHRONOLOG-${format(new Date(message.timestamp), 'yyyy-MM-dd')}`
+async function getAllDatesMarkup () {
+}
+
+async function getDateMarkup (date) {
+}
+
+async function savePostJSON (message) {
+  const description =
+    `CHRONOLOG-${format(new Date(message.timestamp), 'yyyy-MM-dd')}`
   const content = {
     files: {
       [message.timestamp]: {
@@ -21,13 +28,13 @@ async function saveMessage(message) {
 
   const gists = await github.gists.list()
   const found = gists.data.find(g => g.description === description)
-  if (found) {
-    github.gists.update({ gist_id: found.id, ...content })
-  } else {
-    github.gists.create({ description, ...content })
-  }
+  return found
+    ? github.gists.update({ gist_id: found.id, ...content })
+    : github.gists.create({ description, ...content })
 }
 
 module.exports = {
-  saveMessage
+  getAllDatesMarkup,
+  getDateMarkup,
+  savePostJSON
 }
