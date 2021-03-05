@@ -1,0 +1,27 @@
+{
+  "name": "chronolog",
+  "version": "0.1.0",
+  "description": "Minimalist blogging with (S/M)MS",
+  "main": "chronolog.js",
+  "scripts": {
+    "start": "node chronolog.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mjstahl/chronolog.git"
+  },
+  "keywords": [],
+  "author": "Mark Stahl",
+  "license": "AGPL-3.0-only",
+  "bugs": {
+    "url": "https://github.com/mjstahl/chronolog/issues"
+  },
+  "homepage": "https://github.com/mjstahl/chronolog#readme",
+  "dependencies": {
+    "@feathersjs/express": "^4.5.11",
+    "@feathersjs/feathers": "^4.5.11",
+    "@octokit/rest": "^18.3.3",
+    "date-fns": "^2.18.0",
+    "twilio": "^3.57.0"
+  }
+}
