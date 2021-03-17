@@ -11,9 +11,39 @@ app.disable('x-powered-by')
 app.use(express.errorHandler())
 app.use(express.urlencoded({ extended: false }))
 
+app.get('/', async function getAllDates (_, res) {
+  res.set('Content-Type', 'text/html')
+  try {
+    const markup = await store.getRootMarkup()
+    if (!markup) {
+      res.status(404)
+    } else {
+      res.send(markup)
+    }
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
+app.get('/:date', async function getDate (req, res) {
+  res.set('Content-Type', 'text/html')
+  try {
+    const markup = await store.getDateMarkup(req.params['date'])
+    if (!markup) {
+      res.status(404)
+    } else {
+      res.send(markup)
+    }
+  } catch (e) {
+    res.status(500).send(e)
+  }
+})
+
 app.post('/posts', validateRequest, ({ body }, res) => {
   const post = {
     body: body.Body,
+    // should also restrict to specific phone numbers
+    // "+19155543303" -> "19155543303"
     from: body.From.slice(1),
     media: [],
     timestamp: new Date().getTime()
@@ -32,27 +62,9 @@ app.post('/posts', validateRequest, ({ body }, res) => {
   }
   store.savePostJSON(post)
   // Fail silently, so go ahead and assume success by immediately
-  // sending a 201 Created back. These messages aren't necessarily
+  // sending a "201 Created" back. These messages aren't necessarily
   // meant to be important.
   res.writeHead(201).end()
-})
-
-app.get('/', async function getAllDates (_, res) {
-  res.set('Content-Type', 'text/html')
-  // store.getAllDatesMarkup()
-  //   .then(html => res.send(html))
-  //   // Return failure HTML
-  //   .error(e => res.status(500).send(e))
-  res.writeHead(501).end()
-})
-
-app.get('/:date', async function getDate (req, res) {
-  res.set('Content-Type', 'text/html')
-  // store.getDateMarkup(req.params.date)
-  //   .then(html => res.send(html))
-  //   // Return failure HTML
-  //   .error(e => res.status(500).send(e))
-  res.writeHead(501).end()
 })
 
 app.listen(process.env.PORT).on('listening', () => (

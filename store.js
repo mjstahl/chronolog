@@ -1,40 +1,62 @@
 const { format } = require('date-fns')
+const fetch = require('node-fetch')
 const { Octokit } = require('@octokit/rest')
+
+const { createDay, updateDay, updateRoot } = require('./generator')
 
 const github = new Octokit({
   auth: process.env.GITHUB_TOKEN
 })
 
-async function getAllDatesMarkup () {
+// GET /
+async function getRootMarkup() {
+  const gists = await github.gists.list()
+  const found = gists.data.find(g => g.description === 'CHRONOLOG-ROOT')
+  if (found) {
+    const response = await fetch(found.files['html'].raw_url)
+    return await response.text()
+  }
 }
 
-async function getDateMarkup (date) {
+// GET /:yyyy-MM-dd
+async function getDateMarkup(date) {
+  const gists = await github.gists.list()
+  const description = `CHRONOLOG-${date}`
+
+  const found = gists.data.find(g => g.description === description)
+  if (found) {
+    const response = await fetch(found.files['html'].raw_url)
+    return await response.text()
+  }
 }
 
-async function savePostJSON (message) {
-  const description =
-    `CHRONOLOG-${format(new Date(message.timestamp), 'yyyy-MM-dd')}`
-  const content = {
-    files: {
-      [message.timestamp]: {
-        content: JSON.stringify({
-          body: message.body,
-          media: message.media
-        })
-      }
-    },
-    public: false
+// POST /posts
+async function savePostJSON(message) {
+  const gists = await github.gists.list()
+
+  const date = format(new Date(message.timestamp), 'yyyy-MM-dd')
+  const description = `CHRONOLOG-${date}`
+  const found = gists.data.find(g => g.description === description)
+
+  let day
+  if (found) {
+    day = await updateDay(date, found, message)
+    await github.gists.update(day)
+  } else {
+    day = await createDay(date, description, message)
+    await github.gists.create(day)
   }
 
-  const gists = await github.gists.list()
-  const found = gists.data.find(g => g.description === description)
-  return found
-    ? github.gists.update({ gist_id: found.id, ...content })
-    : github.gists.create({ description, ...content })
+  const root = gists.data.find(g => g.description === 'CHRONOLOG-ROOT')
+  const updated = updateRoot(root, day, date)
+
+  return (root)
+    ? await github.gists.update(updated)
+    : await github.gists.create(updated)
 }
 
 module.exports = {
-  getAllDatesMarkup,
   getDateMarkup,
+  getRootMarkup,
   savePostJSON
 }

@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Mark Stahl</title>
+  <link rel="icon" type="image/png" href="https://avatars2.githubusercontent.com/u/212726?s=32">
+  <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Rubik:wght@300&display=swap"
+    rel="stylesheet">
+</head>
+
+<body>
+  <header>
+    <h1 class="name">
+      <a href="/">mark stahl</a>
+    </h1>
+  </header>
+  <main>
+    <ul class="days">
+      <% posts.forEach(p=> { %>
+        <li>
+          <time>
+            <%= p.date %>
+          </time>
+          <div class="title">
+            <a href="<%= p.href %>">
+              <%= p.title %>
+            </a>
+          </div>
+        </li>
+        <% }) %>
+    </ul>
+  </main>
+  <footer class="centered">
+    &copy; <%= year %>
+  </footer>
+</body>
+
+</html>

@@ -23,6 +23,8 @@
     "@feathersjs/feathers": "^4.5.11",
     "@octokit/rest": "^18.3.3",
     "date-fns": "^2.18.0",
+    "ejs": "^3.1.6",
+    "node-fetch": "^2.6.1",
     "standard": "^16.0.3",
     "twilio": "^3.57.0"
   }
