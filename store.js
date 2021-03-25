@@ -9,29 +9,29 @@ const github = new Octokit({
 })
 
 // GET /
-async function getRootMarkup() {
+async function getRootMarkup () {
   const gists = await github.gists.list()
   const found = gists.data.find(g => g.description === 'CHRONOLOG-ROOT')
   if (found) {
-    const response = await fetch(found.files['html'].raw_url)
+    const response = await fetch(found.files.html.raw_url)
     return await response.text()
   }
 }
 
 // GET /:yyyy-MM-dd
-async function getDateMarkup(date) {
+async function getDateMarkup (date) {
   const gists = await github.gists.list()
   const description = `CHRONOLOG-${date}`
 
   const found = gists.data.find(g => g.description === description)
   if (found) {
-    const response = await fetch(found.files['html'].raw_url)
+    const response = await fetch(found.files.html.raw_url)
     return await response.text()
   }
 }
 
 // POST /posts
-async function savePostJSON(message) {
+async function savePostJSON (message) {
   const gists = await github.gists.list()
 
   const date = format(new Date(message.timestamp), 'yyyy-MM-dd')

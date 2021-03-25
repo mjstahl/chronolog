@@ -1,7 +1,7 @@
 const feathers = require('@feathersjs/feathers')
 const express = require('@feathersjs/express')
-require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 
+require('twilio')(process.env.TWILIO_SID, process.env.TWILIO_TOKEN)
 const { validateRequest } = require('./middleware')
 const store = require('./store')
 
@@ -28,7 +28,7 @@ app.get('/', async function getAllDates (_, res) {
 app.get('/:date', async function getDate (req, res) {
   res.set('Content-Type', 'text/html')
   try {
-    const markup = await store.getDateMarkup(req.params['date'])
+    const markup = await store.getDateMarkup(req.params.date)
     if (!markup) {
       res.status(404)
     } else {
@@ -42,7 +42,6 @@ app.get('/:date', async function getDate (req, res) {
 app.post('/posts', validateRequest, ({ body }, res) => {
   const post = {
     body: body.Body,
-    // should also restrict to specific phone numbers
     // "+19155543303" -> "19155543303"
     from: body.From.slice(1),
     media: [],
