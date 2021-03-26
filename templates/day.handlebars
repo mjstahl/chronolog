@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Mark Stahl - <%= date %>
+  <title>Mark Stahl - {{ date }}
   </title>
   <link rel="icon" type="image/png" href="https://avatars2.githubusercontent.com/u/212726?s=32">
   <link href="https://fonts.googleapis.com/css2?family=Libre+Baskerville&family=Rubik:wght@300&display=swap"
@@ -25,29 +25,28 @@
   <main>
     <article>
       <header>
-        <h1>
-          <%= date %>
-        </h1>
+        <h1>{{ date }}</h1>
       </header>
-      <p class="date">
-        <%= date %>
-      </p>
       <div class="body">
-        <% posts.forEach(p=> { %>
-          <li>
+        {{#each sections}}
+          <div class="section">
             <time>
-              <%= p.timestamp %>
+              {{ time }}
             </time>
-            <div class="content">
-              <%= p.body %>
-            </div>
-          </li>
-          <% }) %>
+            {{#each content as |post|}}
+              {{#ifEquals post.type "media"}}
+                <img src="{{ post.value }}" />
+              {{else}}
+                <p>{{ post.value }}</p>
+              {{/ifEquals}}
+            {{/each}}
+          </div>
+        {{/each}}
       </div>
     </article>
   </main>
   <footer class="centered">
-    &copy; <%= 2021 %>
+    &copy; {{ year }}
   </footer>
 </body>
 
