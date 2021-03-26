@@ -34,21 +34,21 @@ async function getDateMarkup (date) {
 async function savePostJSON (message) {
   const gists = await github.gists.list()
 
-  const date = format(new Date(message.timestamp), 'yyyy-MM-dd')
-  const description = `CHRONOLOG-${date}`
+  const formattedDate = format(new Date(message.timestamp), 'yyyy-MM-dd')
+  const description = `CHRONOLOG-${formattedDate}`
   const found = gists.data.find(g => g.description === description)
 
   let day
   if (found) {
-    day = await updateDay(date, found, message)
+    day = await updateDay(found, message)
     await github.gists.update(day)
   } else {
-    day = await createDay(date, description, message)
+    day = await createDay(description, message)
     await github.gists.create(day)
   }
 
   const root = gists.data.find(g => g.description === 'CHRONOLOG-ROOT')
-  const updated = updateRoot(root, day, date)
+  const updated = updateRoot(root, day, message.timestamp)
 
   return (root)
     ? await github.gists.update(updated)

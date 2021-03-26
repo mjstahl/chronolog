@@ -1,0 +1,108 @@
+@import 'reset.css';
+
+html {
+  min-width: 320px;
+  background-color: #fcf8e8;
+  font-size: 20px;
+  font-weight: normal;
+}
+
+body {
+  max-width: 700px;
+  margin: 0 auto;
+  font-family: 'Rubik', sans-serif;
+  color: #393e46;
+}
+
+h1 {
+  color: #222831;
+  font-size: 32px;
+}
+
+a {
+  color: black;
+  text-decoration: none;
+  border-bottom: 2px solid blue;
+}
+
+main {
+  margin-top: 24px;
+}
+
+time {
+  font-family: 'Libre Baskerville', serif;
+  font-weight: bolder;
+}
+
+div.section {
+  margin-bottom: 25px;
+}
+
+a:visited {
+  color: black;
+}
+
+article p {
+  text-indent: 24px;
+  line-height: 32.36px;
+}
+
+body > header {
+  display: flex;
+  margin-top: 16px;
+  justify-content: space-between;
+  font-size: 24px;
+}
+
+article header {
+  margin-bottom: 32px;
+  text-align: center;
+}
+
+.topics {
+  list-style: none;
+}
+
+footer {
+  margin-top: 48px;
+  margin-bottom: 16px;
+  font-size: 16px;
+  display: flex;
+  justify-content: center;
+}
+
+@media only screen and (min-width:320px) and (max-width:600px){
+  body > header, footer, main {
+    margin-left: 16px;
+    margin-right: 16px;
+  }
+
+  body > header {
+    display: block;
+    text-align: center
+  }
+
+  .topics {
+    margin-top: 24px
+  }
+
+  article p {
+    text-indent: 0px;
+  }
+}
+
+@media only screen and (min-width:600px) {
+  body > header, footer, main {
+    margin-left: 32px;
+    margin-right: 32px;
+    max-width: 960px;
+    display: flex;
+  }
+}
+
+@media only screen and (min-width:960px) {
+  body > header, footer, main {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

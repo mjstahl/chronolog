@@ -10,6 +10,7 @@ app.disable('x-powered-by')
 
 app.use(express.errorHandler())
 app.use(express.urlencoded({ extended: false }))
+app.use(express.static('assets'))
 
 app.get('/', async function getAllDates (_, res) {
   res.set('Content-Type', 'text/html')

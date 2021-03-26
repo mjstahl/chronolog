@@ -8,7 +8,7 @@ const handlebars = require('handlebars')
 require('./templates/helpers')
 const { TIME_DELIM } = require('./constants')
 
-async function createDay (date, description, message) {
+async function createDay (description, message) {
   const posts = [{
     timestamp: message.timestamp,
     body: message.body,
@@ -16,11 +16,11 @@ async function createDay (date, description, message) {
   }]
   return {
     description,
-    ...assembleDayContent(date, posts)
+    ...assembleDayContent(message.timestamp, posts)
   }
 }
 
-async function updateDay (date, found, message) {
+async function updateDay (found, message) {
   const response = await fetch(found.files.posts.raw_url)
   const posts = await response.json()
   const updated = [
@@ -33,11 +33,11 @@ async function updateDay (date, found, message) {
   ]
   return {
     gist_id: found.id,
-    ...assembleDayContent(date, updated)
+    ...assembleDayContent(message.timestamp, updated)
   }
 }
 
-function updateRoot (root, day, date) {
+function updateRoot (root, day, timestamp) {
   // inverse the order of the days posts so that the most recent
   // appears first
   const posts = JSON.parse(day.files.posts.content)
@@ -45,18 +45,18 @@ function updateRoot (root, day, date) {
 
   return {
     [root ? 'gist_id' : 'description']: (root) ? root.id : 'CHRONOLOG-ROOT',
-    ...assembleDayContent(date, posts)
+    ...assembleDayContent(timestamp, posts)
   }
 }
 
-function assembleDayContent (date, posts) {
+function assembleDayContent (timestamp, posts) {
   return {
     files: {
       posts: {
         content: JSON.stringify(posts)
       },
       html: {
-        content: dayHTML({ date, posts })
+        content: dayHTML(timestamp, posts)
       }
     },
     public: false
@@ -66,24 +66,26 @@ function assembleDayContent (date, posts) {
 const dayTemplate =
   handlebars.compile(fs.readFileSync('./templates/day.handlebars', 'utf-8'))
 
-function dayHTML ({ date, posts }) {
+function dayHTML (timestamp, posts) {
   const sections = posts.reduce((content, post) => {
     const postTimestamp = new Date(post.timestamp)
-    const value = (post.body) ? {
-      type: 'text',
-      value: post.body
-    } : {
-      type: 'media',
-      value: post.media
-    }
+    const value = (post.body)
+      ? {
+          type: 'text',
+          value: post.body
+        }
+      : {
+          type: 'media',
+          value: post.media
+        }
 
     const recent = content[content.length - 1]
 
     // we need to use abs because the root is time
     // reversed, latest -> earliest, where as normal
     // posts are earliest -> latest
-    let group = recent
-      && Math.abs(differenceInMinutes(new Date(recent.timestamp), postTimestamp)) <= TIME_DELIM
+    const group = recent &&
+      Math.abs(differenceInMinutes(new Date(recent.timestamp), postTimestamp)) <= TIME_DELIM
     if (group) {
       recent.content.push(value)
     } else {
@@ -97,8 +99,10 @@ function dayHTML ({ date, posts }) {
     return content
   }, [])
 
-  const year = date.split('-')[0]
-  return dayTemplate({ year, date, sections })
+  const date = new Date(timestamp)
+  const formattedDate = format(date, 'd MMMM y')
+  const year = format(date, 'y')
+  return dayTemplate({ year, formattedDate, sections })
 }
 
 module.exports = {
