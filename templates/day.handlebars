@@ -34,9 +34,11 @@
             </time>
             {{#each content as |post|}}
               {{#ifEquals post.type "media"}}
-                <img src="{{ post.value }}" />
+                {{#each post.value}}
+                  <img src="{{.}}" />
+                {{/each}}
               {{else}}
-                <p>{{ post.value }}</p>
+                <p>{{post.value}}</p>
               {{/ifEquals}}
             {{/each}}
           </div>
