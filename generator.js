@@ -8,7 +8,7 @@ const handlebars = require('handlebars')
 require('./templates/helpers')
 const { TIME_DELIM } = require('./constants')
 
-async function createDay(description, message) {
+async function createDay (description, message) {
   const posts = [{
     timestamp: message.timestamp,
     body: message.body,
@@ -20,7 +20,7 @@ async function createDay(description, message) {
   }
 }
 
-async function updateDay(found, message) {
+async function updateDay (found, message) {
   const response = await fetch(found.files.posts.raw_url)
   const posts = await response.json()
   const updated = [
@@ -37,7 +37,7 @@ async function updateDay(found, message) {
   }
 }
 
-function updateRoot(root, day, timestamp) {
+function updateRoot (root, day, timestamp) {
   // inverse the order of the days posts so that the most recent
   // appears first
   const posts = JSON.parse(day.files.posts.content)
@@ -49,7 +49,7 @@ function updateRoot(root, day, timestamp) {
   }
 }
 
-function assembleDayContent(timestamp, posts) {
+function assembleDayContent (timestamp, posts) {
   return {
     files: {
       posts: {
@@ -66,18 +66,18 @@ function assembleDayContent(timestamp, posts) {
 const dayTemplate =
   handlebars.compile(fs.readFileSync('./templates/day.handlebars', 'utf-8'))
 
-function dayHTML(timestamp, posts) {
+function dayHTML (timestamp, posts) {
   const sections = posts.reduce((content, post) => {
     const postTimestamp = new Date(post.timestamp)
     const value = (post.body)
       ? {
-        type: 'text',
-        value: post.body
-      }
+          type: 'text',
+          value: post.body
+        }
       : {
-        type: 'media',
-        value: post.media.map(m => m.url)
-      }
+          type: 'media',
+          value: post.media.map(m => m.url)
+        }
 
     const recent = content[content.length - 1]
 
